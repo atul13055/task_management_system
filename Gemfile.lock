@@ -404,7 +404,6 @@ DEPENDENCIES
   brakeman
   cancancan
   debug
-  devise
   devise-jwt
   dotenv-rails
   kamal

@@ -47,7 +47,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
   gem 'dotenv-rails' 
 end
-gem 'devise'
 gem 'devise-jwt'           
 gem 'cancancan'      
 gem 'active_model_serializers'
