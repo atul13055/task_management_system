@@ -58,6 +58,7 @@ gem 'pry-rails'
 gem 'kaminari'              
 gem 'ransack' 
 gem 'jwt'  
+gem 'gem_activity_tracker', '~> 1.0', '>= 1.0.2'
 
 
 

@@ -1,0 +1,114 @@
+---
+:project_name: task_management_system
+:ruby_version: ruby 3.2.2 (2023-03-30 revision e51014f9c0) [x86_64-linux]
+:rails_version: 8.0.2
+:database: postgresql
+:models:
+  :count: 3
+  :files:
+  - app/models/application_record.rb
+  - app/models/team.rb
+  - app/models/user.rb
+  :detailed:
+    ApplicationRecord:
+      :error: 'Failed to load model: ActiveRecord::TableNotSpecified - ApplicationRecord has no table configured. Set one with ApplicationRecord.table_name='
+    Team:
+      :table_name: teams
+      :file: app/models/team.rb
+      :attributes:
+      - id
+      - name
+      - creator_id
+      - created_at
+      - updated_at
+      :attribute_defaults:
+        id: 
+        name: 
+        creator_id: 
+        created_at: 
+        updated_at: 
+      :sti: false
+      :polymorphic_associations: []
+      :associations: {}
+      :validations: {}
+      :enums: {}
+      :callbacks: {}
+      :scopes: []
+      :class_methods: []
+      :instance_methods: []
+      :methods_count: 0
+    User:
+      :table_name: users
+      :file: app/models/user.rb
+      :attributes:
+      - id
+      - name
+      - mobile
+      - departement
+      - email
+      - password_digest
+      - last_logged_in
+      - created_at
+      - updated_at
+      :attribute_defaults:
+        id: 
+        name: 
+        mobile: 
+        departement: 
+        email: 
+        password_digest: 
+        last_logged_in: 
+        created_at: 
+        updated_at: 
+      :sti: false
+      :polymorphic_associations: []
+      :associations: {}
+      :validations:
+        :password:
+        - confirmation_validator
+        - confirmation_validator
+        - length_validator
+        :email:
+        - presence_validator
+        - uniqueness_validator
+        :password_confirmation:
+        - presence_validator
+      :enums: {}
+      :callbacks: {}
+      :scopes: []
+      :class_methods:
+      - find_by_password_reset_token
+      - find_by_password_reset_token!
+      :instance_methods: []
+      :methods_count: 0
+:controllers:
+  :count: 3
+  :files:
+  - app/controllers/api/v1/auth_controller.rb
+  - app/controllers/api/v1/users_controller.rb
+  - app/controllers/application_controller.rb
+:jobs:
+  :count: 1
+  :files:
+  - app/jobs/application_job.rb
+:mailers:
+  :count: 1
+  :files:
+  - app/mailers/application_mailer.rb
+:services:
+  :count: 0
+  :files: []
+:migrations:
+  :count: 2
+  :recent_changes:
+  - create_users
+  - create_teams
+:schema_hash: 39b878c5d2c464675157d2b2df994006
+:git_log:
+- '22bac4a - Atul Yadav (2025-04-17): Replaced  with custom  implementation for JWT authentication'
+- '9ce485f - Atul Yadav (2025-04-17): Add rake task to auto-generate .keep files in ignored folders'
+- '65f2f47 - Atul Yadav (2025-04-17): Update .gitignore'
+- 'f16f07b - Atul Yadav (2025-04-17): Add Devise user model with JWT authentication and updated routes'
+- '18da4bc - Atul Yadav (2025-04-17): initalizing JWT configuration with devise'
+- '46eb75b - Atul Yadav (2025-04-17): Add required gems for task management project'
+- '6967f53 - Atul Yadav (2025-04-16): Initialize Rails API project: task_management_system'

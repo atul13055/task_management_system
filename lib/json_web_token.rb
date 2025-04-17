@@ -1,27 +1,52 @@
-# lib/json_web_token.rb
 class JsonWebToken
-  SECRET_KEY = Rails.application.credentials.fetch(:secret_key_base) || ENV['DEVISE_JWT_SECRET_KEY']
-  
-  # Fetch expiration time from ENV or credentials (in minutes)
-  EXPIRATION_TIME = Rails.application.credentials.fetch(:jwt_expiration_time, ENV['JWT_EXPIRATION_TIME'] || 160).to_i.minutes
+  class << self
+    # Stronger encryption by default (HS512)
+    ALGORITHM = 'HS512'.freeze
 
-  def self.encode(payload, exp = EXPIRATION_TIME)
-    payload[:exp] = exp.to_i
-    JWT.encode(payload, SECRET_KEY)
-  end
-
-  def self.decode(token)
-    decoded = JWT.decode(token, SECRET_KEY, true, { algorithm: 'HS512' })[0]
-    
-    # Check if token has expired
-    if decoded['exp'] < Time.now.to_i
-      raise JWT::ExpiredSignature, 'Token has expired'
+    # Fetch secret from credentials or ENV with fallback
+    def secret_key
+      @secret_key ||= Rails.application.credentials.dig(:jwt, :secret_key) || 
+                      ENV['JWT_SECRET_KEY'] || 
+                      Rails.application.secret_key_base
     end
-    
-    HashWithIndifferentAccess.new(decoded)
-  rescue JWT::DecodeError => e
-    nil  # Return nil if the token is invalid or expired
-  rescue JWT::ExpiredSignature => e
-    nil  # Return nil if the token is expired
+
+    # Configurable expiration time (default: 24 hours)
+    def expiration_time
+      @expiration_time ||= 
+        (Rails.application.credentials.dig(:jwt, :expiration_time) ||
+        ENV['JWT_EXPIRATION_TIME'] || 
+        24.hours)
+    end
+
+    # Generate token with custom payload
+    def encode(payload, exp = expiration_time.from_now)
+      payload = payload.dup
+      payload[:exp] = exp.to_i
+      JWT.encode(payload, secret_key, ALGORITHM)
+    end
+
+    # Decode and verify token
+    def decode(token)
+      decoded = JWT.decode(token, secret_key, true, { 
+        algorithm: ALGORITHM,
+        verify_expiration: true 
+      })[0]
+      
+      HashWithIndifferentAccess.new(decoded)
+    rescue JWT::ExpiredSignature
+      raise JWT::ExpiredSignature, 'Token has expired. Please login again.'
+    rescue JWT::VerificationError
+      raise JWT::VerificationError, 'Invalid token signature.'
+    rescue JWT::DecodeError
+      raise JWT::DecodeError, 'Invalid token format.'
+    end
+
+    # Helper method for controller concerns
+    def current_user(token)
+      payload = decode(token)
+      User.find_by(id: payload[:user_id])
+    rescue ActiveRecord::RecordNotFound
+      raise 'User not found'
+    end
   end
 end

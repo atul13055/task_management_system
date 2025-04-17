@@ -12,12 +12,11 @@ class Api::V1::AuthController < ApplicationController
   end
 
   def login
-    user = user = User.find_by(email: params[:data][:email])
-    debugger
+    user = User.find_by(email: params[:data][:email])
+    debugger # Check user object and params
     if user&.authenticate(params[:data][:password])
       token = JsonWebToken.encode(user_id: user.id)
       user.update(last_logged_in: Time.current)
-
       render json: { messages: 'Login Successful', data: UserSerializer.new(user), token: token }, status: :ok
     else
       render json: { error: 'Invalid email or password' }, status: :unauthorized
@@ -28,6 +27,6 @@ class Api::V1::AuthController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    params.require(:data).permit(:name, :email, :password, :password_confirmation)
   end
 end

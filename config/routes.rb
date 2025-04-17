@@ -6,9 +6,13 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
   namespace :api do
     namespace :v1 do
-      post 'signup', to: 'auth#signup'
-      post 'login', to: 'auth#login'
-      get 'profile', to: 'users#profile'
+      # Auth routes
+      namespace :auth do
+        post 'signup', to: 'auth#signup'
+        post 'login', to: 'auth#login'
+        delete 'logout', to: 'auth#logout' # Add logout if you plan to have it
+      end
+      get 'users/profile', to: 'users#profile' # Corrected 'user' to 'users'
     end
   end
 end
