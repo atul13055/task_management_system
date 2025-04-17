@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_17_182805) do
+ActiveRecord::Schema[7.0].define(version: 2025_04_17_213654) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pg_catalog.plpgsql"
+  enable_extension "plpgsql"
 
   create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "team_id", null: false
-    t.integer "role"
+    t.integer "user_role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_memberships_on_team_id"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_17_182805) do
     t.text "description"
     t.integer "status", default: 0
     t.integer "priority", default: 1
-    t.datetime "due_date", precision: nil
+    t.datetime "due_date"
     t.bigint "team_id"
     t.bigint "creator_id"
     t.bigint "assigned_user_id"

@@ -1,7 +1,8 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 8.0.2"
+gem 'rails', '~> 7.0.4'
+
 # Use sqlite3 as the database for Active Record
 # gem "sqlite3", ">= 2.1"
 gem "pg", "~> 1.1"
@@ -17,9 +18,10 @@ gem "bcrypt", "~> 3.1.7"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
-gem "solid_cache"
-gem "solid_queue"
-gem "solid_cable"
+# gem "solid_cache"
+# gem "solid_queue"
+# gem "solid_cable"
+gem 'concurrent-ruby', '1.3.4' 
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
