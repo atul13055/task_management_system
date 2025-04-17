@@ -10,15 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_17_160317) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_17_182805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "teams", force: :cascade do |t|
-    t.string "name"
-    t.integer "creator_id"
+  create_table "memberships", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "team_id", null: false
+    t.integer "role"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_memberships_on_team_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "status", default: 0
+    t.integer "priority", default: 1
+    t.datetime "due_date", precision: nil
+    t.bigint "team_id"
+    t.bigint "creator_id"
+    t.bigint "assigned_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_user_id"], name: "index_tasks_on_assigned_user_id"
+    t.index ["creator_id"], name: "index_tasks_on_creator_id"
+    t.index ["team_id"], name: "index_tasks_on_team_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.string "name"
+    t.bigint "creator_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_id"], name: "index_teams_on_creator_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -31,4 +58,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_17_160317) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "memberships", "teams"
+  add_foreign_key "memberships", "users"
+  add_foreign_key "tasks", "teams"
+  add_foreign_key "tasks", "users", column: "assigned_user_id"
+  add_foreign_key "tasks", "users", column: "creator_id"
+  add_foreign_key "teams", "users", column: "creator_id"
 end
