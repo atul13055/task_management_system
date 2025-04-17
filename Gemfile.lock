@@ -400,12 +400,14 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  bcrypt (~> 3.1.7)
   bootsnap
   brakeman
   cancancan
   debug
   devise-jwt
   dotenv-rails
+  jwt
   kamal
   kaminari
   pg (~> 1.1)
