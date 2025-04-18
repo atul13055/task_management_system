@@ -17,7 +17,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_04_17_213654) do
   create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "team_id", null: false
-    t.integer "user_role", default: 0
+    t.integer "role", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["team_id"], name: "index_memberships_on_team_id"
