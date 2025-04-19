@@ -6,6 +6,12 @@ class User < ApplicationRecord
             confirmation: true,
             length: { minimum: 6, message: 'must be at least 6 characters long' }
   validates :password_confirmation, presence: true, if: -> { password.present? }
+  
+  enum status: {
+    available: 'available',
+    busy: 'busy',
+    suspended: 'suspended'
+  }
 
   has_many :memberships, dependent: :destroy
   has_many :teams, through: :memberships

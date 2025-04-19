@@ -1,15 +1,15 @@
-# app/serializers/team_serializer.rb
 class TeamSerializer < ActiveModel::Serializer
   attributes :id, :name, :members
 
   def members
+    roles_by_user_id = object.memberships.index_by(&:user_id)
+
     object.users.map do |user|
-     role = object.memberships.find_by(user_id: user)&.role
       {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: role
+        role: roles_by_user_id[user.id]&.role
       }
     end
   end
