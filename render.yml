@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: task-management-api
+    env: ruby
+    plan: free
+    buildCommand: ./render-build.sh
+    startCommand: bundle exec puma -t 5:5 -p ${PORT:-3000} -e ${RACK_ENV:-production}
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: DATABASE_URL
+        value: {{ DATABASE_URL }}  # This will be automatically set by Render when you create the PostgreSQL database
+      - key: SECRET_KEY_BASE
+        value: {{ SECRET_KEY_BASE }}  # Set this in your Render environment variables or generate using `rails secret`
+      - key: JWT_SECRET_KEY
+        value: {{ JWT_SECRET_KEY }}  # Replace with your actual JWT secret key
+      - key: REDIS_URL
+        value: {{ REDIS_URL }}  # This will be automatically set by Render for the Redis service
+      - key: RAILS_MASTER_KEY
+        value: {{ RAILS_MASTER_KEY }}  # If you're using Rails credentials
+    healthCheckPath: /health  # Optional: Health check for your API, you can create a custom route for this
+
+databases:
+  - name: task_management_db
+    type: postgresql
+    plan: free  # You can choose a higher plan depending on your needs
+
+redis:
+  - name: task-management-redis
+    plan: free  # You can change this to a higher plan based on your needs
+
+workers:
+  - type: background
+    name: sidekiq
+    env: ruby
+    plan: free
+    buildCommand: bundle install
+    startCommand: bundle exec sidekiq -C config/sidekiq.yml  # This is where Sidekiq is started
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: REDIS_URL
+        value: {{ REDIS_URL }}  # This will be automatically set by Render for the Redis service
