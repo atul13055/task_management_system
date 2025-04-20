@@ -18,6 +18,14 @@ Rails.application.routes.draw do
         member do
           post 'invite'
           get  'members'
+          get  'inviteable_users'
+        end
+        resources :tasks, only: [:index, :create]
+      end
+      #tasks
+      resources :tasks, only: [:show, :update, :destroy] do
+        member do
+          patch 'assign'
         end
       end
     end

@@ -1,9 +1,9 @@
 class Api::V1::TeamsController < ApplicationController
-
-  before_action :set_team, only: [:invite, :members]
+  load_and_authorize_resource except: [:members, :invite, :inviteable_users]
+  before_action :set_team, only: [:members, :invite, :inviteable_users]
 
   def index
-    @teams = current_user.teams.includes(:memberships).page(params[:page]).per(params[:per_page] || 10)
+    @teams = @teams.page(params[:page]).per(params[:per_page] || 10)
 
     render json: @teams,
            each_serializer: TeamSerializer,
@@ -16,9 +16,7 @@ class Api::V1::TeamsController < ApplicationController
            adapter: :json
   end
 
-
   def create
-    @team = Team.new(team_params)
     @team.creator = current_user
 
     if @team.save
@@ -35,32 +33,49 @@ class Api::V1::TeamsController < ApplicationController
     end
   end
 
+  def inviteable_users
+    authorize! :manage, @team
+
+    users = User.where.not(id: @team.user_ids)
+    users = users.where(status: params[:status]) if params[:status].present?
+    users = users.where(designation: params[:designation]) if params[:designation].present?
+
+    if params[:search].present?
+      keyword = "%#{params[:search].downcase}%"
+      users = users.where("LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(username) LIKE ?", keyword, keyword, keyword)
+    end
+
+    users = users.page(params[:page]).per(params[:per_page] || 10)
+
+    render json: users,
+           each_serializer: InviteableUserSerializer,
+           meta: {
+             current_page: users.current_page,
+             total_pages: users.total_pages,
+             total_count: users.total_count
+           },
+           adapter: :json
+  end
 
   def invite
-    unless current_user.admin_of?(@team)
-      return render json: { error: 'Only admins can invite user' }, status: :forbidden
-    end
+    authorize! :manage, @team
 
     user = User.find_by(email: params[:email])
-    if user.nil?
-      return render json: { error: 'User not found' }, status: :not_found
-    end
+    return render json: { error: 'User not found' }, status: :not_found unless user
 
     if @team.users.include?(user)
-      return render json: { error: 'User is already a member of team' }, status: :unprocessable_entity
+      return render json: { error: 'User is already a member of the team' }, status: :unprocessable_entity
     end
 
     if @team.memberships.create(user: user, role: params[:role] || :member)
       render json: { message: 'User invited successfully' }
     else
-      render json: { error: 'Invitation faiiled' }, status: :unprocessable_entity
+      render json: { error: 'Invitation failed' }, status: :unprocessable_entity
     end
   end
 
   def members
-    unless current_user.member_of?(@team)
-      return render json: { error: 'You are not member of this team' }, status: :forbidden
-    end
+    authorize! :read, @team
 
     team_members = @team.memberships.includes(:user).map do |membership|
       {
@@ -71,14 +86,21 @@ class Api::V1::TeamsController < ApplicationController
       }
     end
 
-    render json: team_members
+    render json: {
+      team: {
+        id: @team.id,
+        name: @team.name,
+        created_at: @team.created_at
+      },
+      members: team_members
+    }
   end
 
 
   private
 
   def set_team
-    @team = Team.find(params[:id])
+    @team = Team.find(params[:team_id] || params[:id])
   end
 
   def team_params

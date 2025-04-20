@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::API
   include CanCan::ControllerAdditions
 
+  rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
   rescue_from CanCan::AccessDenied, with: :handle_authorization_error
 
   before_action :authorize_request
@@ -31,7 +32,17 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def handle_not_found(exception)
+    render json: {
+      error: 'Resource not found',
+      message: exception.message
+    }, status: :not_found
+  end
+
   def handle_authorization_error(exception)
-    render json: { error: "Access denied: #{exception.message}" }, status: :forbidden
+    render json: {
+      error: 'Access denied',
+      message: exception.message
+    }, status: :forbidden
   end
 end

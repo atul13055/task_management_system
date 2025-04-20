@@ -1,6 +1,13 @@
 class TaskSerializer < ActiveModel::Serializer
-  attributes :id, :title, :description, :status, :priority, :due_date
+  attributes :id, :title, :description, :status, :priority, :due_date, :team
 
-  belongs_to :team, serializer: TeamSerializer
+  # belongs_to :team, serializer: TeamSerializer
+  def team
+      {
+        id: object.team.id,
+        name: object.team.name,
+        creator_id: object.team.creator_id
+      }
+    end
   belongs_to :assigned_user, serializer: UserSerializer
 end

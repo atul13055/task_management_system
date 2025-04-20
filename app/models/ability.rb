@@ -3,7 +3,7 @@ class Ability
 
   def initialize(user)
     user ||= User.new
-
+    # debugger
     team_ids = user.teams.pluck(:id)
     admin_team_ids = user.memberships.select { |m| m.admin? }.map(&:team_id)
 

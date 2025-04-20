@@ -23,14 +23,14 @@
       - id
       - user_id
       - team_id
-      - user_role
+      - role
       - created_at
       - updated_at
       :attribute_defaults:
         id: 
         user_id: 
         team_id: 
-        user_role: '0'
+        role: '0'
         created_at: 
         updated_at: 
       :sti: false
@@ -44,22 +44,22 @@
         - presence_validator
         :team:
         - presence_validator
-        :user_role:
-        - inclusion_validator
+        :role:
+        - presence_validator
         :user_id:
         - uniqueness_validator
       :enums:
-        user_role:
+        role:
         - member
         - admin
       :callbacks: {}
       :scopes: []
       :class_methods:
-      - member
       - not_admin
-      - not_member
-      - user_roles
+      - member
       - admin
+      - roles
+      - not_member
       :instance_methods:
       - autosave_associated_records_for_team
       - autosave_associated_records_for_user
@@ -121,23 +121,23 @@
       :callbacks: {}
       :scopes: []
       :class_methods:
-      - statuses
-      - not_pending
-      - in_progress
-      - not_in_progress
       - not_completed
       - priorities
-      - low
       - not_low
-      - not_medium
       - medium
+      - low
+      - not_medium
+      - high
+      - not_high
       - completed
       - pending
-      - not_high
-      - high
+      - statuses
+      - not_pending
+      - not_in_progress
+      - in_progress
       :instance_methods:
-      - autosave_associated_records_for_creator
       - autosave_associated_records_for_team
+      - autosave_associated_records_for_creator
       - autosave_associated_records_for_assigned_user
       :methods_count: 3
     Team:
@@ -174,16 +174,16 @@
       :scopes: []
       :class_methods: []
       :instance_methods:
-      - autosave_associated_records_for_memberships
-      - validate_associated_records_for_memberships
-      - add_member
-      - remove_member
-      - autosave_associated_records_for_creator
       - autosave_associated_records_for_users
       - validate_associated_records_for_users
       - admin_users
       - autosave_associated_records_for_tasks
       - validate_associated_records_for_tasks
+      - add_member
+      - autosave_associated_records_for_memberships
+      - validate_associated_records_for_memberships
+      - remove_member
+      - autosave_associated_records_for_creator
       :methods_count: 10
     User:
       :table_name: users
@@ -192,22 +192,32 @@
       - id
       - name
       - mobile
-      - departement
       - email
       - password_digest
       - last_logged_in
       - created_at
       - updated_at
+      - username
+      - status
+      - designation
+      - experience
+      - skills
+      - location
       :attribute_defaults:
         id: 
         name: 
         mobile: 
-        departement: 
         email: 
         password_digest: 
         last_logged_in: 
         created_at: 
         updated_at: 
+        username: 
+        status: available
+        designation: 
+        experience: 
+        skills: 
+        location: 
       :sti: false
       :polymorphic_associations: []
       :associations:
@@ -228,24 +238,35 @@
         - uniqueness_validator
         :password_confirmation:
         - presence_validator
-      :enums: {}
+      :enums:
+        status:
+        - available
+        - busy
+        - suspended
       :callbacks: {}
       :scopes: []
-      :class_methods: []
+      :class_methods:
+      - available
+      - suspended
+      - busy
+      - not_available
+      - not_busy
+      - not_suspended
+      - statuses
       :instance_methods:
-      - autosave_associated_records_for_created_teams
       - validate_associated_records_for_created_teams
-      - autosave_associated_records_for_memberships
-      - validate_associated_records_for_memberships
       - autosave_associated_records_for_created_tasks
       - validate_associated_records_for_created_tasks
+      - password_confirmation
       - autosave_associated_records_for_assigned_tasks
       - validate_associated_records_for_assigned_tasks
-      - password_confirmation
       - admin_of?
       - member_of?
       - autosave_associated_records_for_teams
+      - autosave_associated_records_for_memberships
+      - validate_associated_records_for_memberships
       - validate_associated_records_for_teams
+      - autosave_associated_records_for_created_teams
       :methods_count: 13
 :controllers:
   :count: 5
@@ -277,10 +298,14 @@
   - create_teams
   - create_memberships
   - change_role_to_integer_in_memberships
-  - rename_role_to_user_role_in_memberships
   - create_tasks
-:schema_hash: 9b376d8f47066693e15c10365ea7efe8
+  - update_users_table
+:schema_hash: 00420ca5eb956debce3420d4cf4ef00a
 :git_log:
+- 'ec8988a - Atul Yadav (2025-04-19): Team create, invite & member APIs added; user table updated with new fields; task model now restricts due_date to future dates only'
+- '93eca52 - Atul Yadav (2025-04-18): Add model validations, callbacks, and business logic; implement serializers for Task and Team'
+- '0d7c701 - Atul Yadav (2025-04-18): fix: improve JWT validations and error handling'
+- '50f79c8 - Atul Yadav (2025-04-18): Downgrade Rails from 8.0 to 7.0 due to instability issues in Rails 8'
 - '518e8dc - Atul Yadav (2025-04-18): Add Task and Membership models and define associations with User and Team'
 - '42094a8 - Atul Yadav (2025-04-17): Add association to team and usser, fix routes and auth controller'
 - '596b5f5 - Atul Yadav (2025-04-17): Implement Teams and UsersController with custom JWT authentication improvements'

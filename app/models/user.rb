@@ -20,11 +20,10 @@ class User < ApplicationRecord
   has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assigned_user_id'
 
   def admin_of?(team)
-    memberships.exists?(team: team, role: :admin)
+    Membership.joins(:team).where(user_id: id, team_id: team.id, role: :admin).exists?
   end
 
-  def member_of?(team)
-    memberships.exists?(team: team)
+  def member_of?(team)Membership.joins(:team).where(user_id: id, team_id: team.id).exists?
   end
 
 end
