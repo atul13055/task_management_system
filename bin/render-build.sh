@@ -13,6 +13,8 @@ echo "Seeding the database..."
 bundle exec rake db:seed RAILS_ENV=production || true
 
 echo "Setting up permissions..."
+mkdir -p tmp/pids tmp/cache tmp/sockets
 chmod -R 777 log tmp/pids tmp/cache tmp/sockets
+
 
 echo "Build process completed for the API."
