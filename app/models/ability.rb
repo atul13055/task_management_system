@@ -16,5 +16,6 @@ class Ability
     can :read, Team, id: team_ids
     can :update, Task, assigned_user_id: user.id
     can :read, Task, assigned_user_id: user.id
+    can :create, Team
   end
 end
