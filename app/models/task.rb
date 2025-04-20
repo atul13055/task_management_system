@@ -10,7 +10,7 @@ class Task < ApplicationRecord
   validates :status, :priority, presence: true
   validate :due_date_cannot_be_in_the_past
 
-  # after_update :send_notifications
+  after_update :send_notifications
 
   private
 
@@ -21,10 +21,12 @@ class Task < ApplicationRecord
   end
 
   def send_notifications
+    # debugger
     if assigned_user_id_previously_changed?
       TaskMailer.task_assigned(self).deliver_later
     elsif saved_change_to_status? && completed?
       TaskMailer.task_completed(self).deliver_later
     end
   end
+
 end

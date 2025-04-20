@@ -17,13 +17,15 @@ class User < ApplicationRecord
   has_many :teams, through: :memberships
   has_many :created_teams, class_name: 'Team', foreign_key: 'creator_id'
   has_many :created_tasks, class_name: 'Task', foreign_key: 'creator_id'
-  has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assigned_user_id'
+  # has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assigned_user_id'
+  has_many :assigned_tasks, class_name: "Task", foreign_key: "assigned_user_id", dependent: :nullify
 
   def admin_of?(team)
     Membership.joins(:team).where(user_id: id, team_id: team.id, role: :admin).exists?
   end
 
-  def member_of?(team)Membership.joins(:team).where(user_id: id, team_id: team.id).exists?
+  def member_of?(team)
+    Membership.joins(:team).where(user_id: id, team_id: team.id).exists?
   end
 
 end

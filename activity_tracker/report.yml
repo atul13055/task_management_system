@@ -55,14 +55,14 @@
       :callbacks: {}
       :scopes: []
       :class_methods:
-      - not_admin
       - member
       - admin
+      - not_admin
       - roles
       - not_member
       :instance_methods:
-      - autosave_associated_records_for_team
       - autosave_associated_records_for_user
+      - autosave_associated_records_for_team
       :methods_count: 2
     Task:
       :table_name: tasks
@@ -121,24 +121,24 @@
       :callbacks: {}
       :scopes: []
       :class_methods:
-      - not_completed
-      - priorities
-      - not_low
-      - medium
-      - low
-      - not_medium
       - high
-      - not_high
-      - completed
-      - pending
+      - low
       - statuses
       - not_pending
       - not_in_progress
       - in_progress
+      - not_completed
+      - completed
+      - medium
+      - pending
+      - priorities
+      - not_medium
+      - not_low
+      - not_high
       :instance_methods:
-      - autosave_associated_records_for_team
       - autosave_associated_records_for_creator
       - autosave_associated_records_for_assigned_user
+      - autosave_associated_records_for_team
       :methods_count: 3
     Team:
       :table_name: teams
@@ -174,6 +174,7 @@
       :scopes: []
       :class_methods: []
       :instance_methods:
+      - autosave_associated_records_for_creator
       - autosave_associated_records_for_users
       - validate_associated_records_for_users
       - admin_users
@@ -183,7 +184,6 @@
       - autosave_associated_records_for_memberships
       - validate_associated_records_for_memberships
       - remove_member
-      - autosave_associated_records_for_creator
       :methods_count: 10
     User:
       :table_name: users
@@ -247,13 +247,18 @@
       :scopes: []
       :class_methods:
       - available
-      - suspended
-      - busy
       - not_available
       - not_busy
       - not_suspended
       - statuses
+      - busy
+      - suspended
       :instance_methods:
+      - autosave_associated_records_for_teams
+      - validate_associated_records_for_teams
+      - autosave_associated_records_for_memberships
+      - validate_associated_records_for_memberships
+      - autosave_associated_records_for_created_teams
       - validate_associated_records_for_created_teams
       - autosave_associated_records_for_created_tasks
       - validate_associated_records_for_created_tasks
@@ -262,11 +267,6 @@
       - validate_associated_records_for_assigned_tasks
       - admin_of?
       - member_of?
-      - autosave_associated_records_for_teams
-      - autosave_associated_records_for_memberships
-      - validate_associated_records_for_memberships
-      - validate_associated_records_for_teams
-      - autosave_associated_records_for_created_teams
       :methods_count: 13
 :controllers:
   :count: 5
@@ -302,6 +302,7 @@
   - update_users_table
 :schema_hash: 00420ca5eb956debce3420d4cf4ef00a
 :git_log:
+- '77a64a1 - Atul Yadav (2025-04-20): Refactored core logic, added Task APIs, updated permissions, serializers, and routes'
 - 'ec8988a - Atul Yadav (2025-04-19): Team create, invite & member APIs added; user table updated with new fields; task model now restricts due_date to future dates only'
 - '93eca52 - Atul Yadav (2025-04-18): Add model validations, callbacks, and business logic; implement serializers for Task and Team'
 - '0d7c701 - Atul Yadav (2025-04-18): fix: improve JWT validations and error handling'

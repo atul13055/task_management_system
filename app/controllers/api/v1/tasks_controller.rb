@@ -57,7 +57,7 @@ class Api::V1::TasksController < ApplicationController
     end
 
     if @task.update(task_params)
-      render json: @task
+      render json: @task.as_json
     else
       render json: @task.errors, status: :unprocessable_entity
     end
@@ -79,7 +79,7 @@ class Api::V1::TasksController < ApplicationController
     @task.assigned_user_id = new_user_id
 
     if @task.save
-      render json: { message: 'Task assigned successfully', task: @task }, status: :ok
+      render json: { message: 'Task assigned successfully', task: @task.as_json }, status: :ok
     else
       render json: @task.errors, status: :unprocessable_entity
     end

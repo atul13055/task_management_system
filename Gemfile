@@ -48,14 +48,13 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
   gem 'dotenv-rails' 
-  gem 'gem_activity_tracker', '~> 1.0', '>= 1.0.2'
+  # gem 'gem_activity_tracker', '~> 1.0', '>= 1.0.2'
 end
 gem 'devise-jwt'           
 gem 'cancancan'      
 gem 'active_model_serializers'
-gem 'sidekiq'
-gem 'redis'
-gem 'rswag-api'
+gem 'redis', '~> 5.0'  
+gem 'sidekiq', '~> 6.2'
 gem 'rswag-ui'
 gem 'pry-rails'    
 gem 'kaminari'              
