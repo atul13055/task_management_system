@@ -1,3 +1,7 @@
 :concurrency: 5
 :queues:
   - default
+
+# Redis URL from ENV variable
+:redis:
+  url: <%= ENV['REDIS_URL'] %>  

@@ -9,25 +9,25 @@ services:
       - key: RAILS_ENV
         value: production
       - key: DATABASE_URL
-        value: {{ DATABASE_URL }}  # This will be automatically set by Render when you create the PostgreSQL database
+        value: {{ DATABASE_URL }}  # Render will automatically set this when creating the PostgreSQL service
       - key: SECRET_KEY_BASE
         value: {{ SECRET_KEY_BASE }}  # Set this in your Render environment variables or generate using `rails secret`
       - key: JWT_SECRET_KEY
-        value: {{ JWT_SECRET_KEY }}  # Replace with your actual JWT secret key
+        value: {{ JWT_SECRET_KEY }}  # Set this key in your environment variables
       - key: REDIS_URL
-        value: {{ REDIS_URL }}  # This will be automatically set by Render for the Redis service
+        value: {{ REDIS_URL }}  # Render will automatically set this for the Redis service
       - key: RAILS_MASTER_KEY
-        value: {{ RAILS_MASTER_KEY }}  # If you're using Rails credentials
-    healthCheckPath: /health  # Optional: Health check for your API, you can create a custom route for this
+        value: {{ RAILS_MASTER_KEY }}  # If you're using Rails credentials, set this in your environment variables
+    healthCheckPath: /health  # Optional: You can create a health check route for your API
 
 databases:
   - name: task_management_db
     type: postgresql
-    plan: free  # You can choose a higher plan depending on your needs
+    plan: free  # Choose a higher plan if needed
 
 redis:
   - name: task-management-redis
-    plan: free  # You can change this to a higher plan based on your needs
+    plan: free  # Choose a higher plan if needed
 
 workers:
   - type: background
@@ -35,9 +35,18 @@ workers:
     env: ruby
     plan: free
     buildCommand: bundle install
-    startCommand: bundle exec sidekiq -C config/sidekiq.yml  # This is where Sidekiq is started
+    startCommand: bundle exec sidekiq -C config/sidekiq.yml  # This will start the Sidekiq worker
     envVars:
       - key: RAILS_ENV
         value: production
       - key: REDIS_URL
-        value: {{ REDIS_URL }}  # This will be automatically set by Render for the Redis service
+        value: {{ REDIS_URL }}  # Automatically set by Render
+
+# Optional: If you need cron jobs, add them here
+cronJobs:
+  - name: task_cleanup
+    schedule: "0 0 * * *"  # Example cron job to run at midnight every day
+    command: bundle exec rake task:cleanup
+    envVars:
+      - key: RAILS_ENV
+        value: production
