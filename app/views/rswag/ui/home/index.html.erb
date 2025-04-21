@@ -118,18 +118,18 @@
     const baseUrl = window.location.origin;
 
     const configObject = {
-      url: "/api-docs/v1/swagger.yaml",
+      url: baseUrl + "/api-docs/v1/swagger.yaml",  // 👈 full absolute URL
       dom_id: "#swagger-ui",
       presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
       layout: "StandaloneLayout",
       requestInterceptor: function(request) {
-        // Inject base_url into requests if needed
         return request;
       }
     };
 
     SwaggerUIBundle(configObject);
   };
+
 </script>
 </body>
 
