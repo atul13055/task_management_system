@@ -1,0 +1,471 @@
+openapi: 3.0.0
+info:
+  title: Task Management API
+  description: API for managing tasks, teams, and user authentication with role-based permissions
+  version: 1.0.0
+servers:
+  - url: https://task-management-system-0c84.onrender.com
+    description: Production server (Render)
+  - url: http://localhost:3000
+    description: Development server
+tags:
+  - name: Auth
+    description: User authentication endpoints
+  - name: Teams
+    description: Team management endpoints
+  - name: Tasks
+    description: Task management endpoints
+  - name: User
+    description: User profile endpoints
+
+paths:
+  /api/v1/signup:
+    post:
+      tags: [Auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "atul yadav"
+                    email:
+                      type: string
+                      format: email
+                      example: "atulyadav9039@gmail.com"
+                    password:
+                      type: string
+                      example: "password123"
+                    password_confirmation:
+                      type: string
+                      example: "password123"
+                  required: [name, email, password, password_confirmation]
+      responses:
+        '200':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+
+  /api/v1/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                      example: "atulyadav9039@gmail.com"
+                    password:
+                      type: string
+                      example: "password123"
+                  required: [email, password]
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT authentication token
+
+  /api/v1/teams:
+    post:
+      tags: [Teams]
+      summary: Create a new team
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                team:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "FE Team"
+                  required: [name]
+      responses:
+        '201':
+          description: Team created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  team:
+                    type: object
+
+    get:
+      tags: [Teams]
+      summary: List all teams for current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/per_page'
+      responses:
+        '200':
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  teams:
+                    type: array
+                    items:
+                      type: object
+                  meta:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+
+  /api/v1/teams/{team_id}/inviteable_users:
+    get:
+      tags: [Teams]
+      summary: List users available for invitation to team
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/team_id'
+        - name: search
+          in: query
+          description: Search term for user names
+          schema:
+            type: string
+          example: "atul yadav"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/per_page'
+      responses:
+        '200':
+          description: List of inviteable users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+
+  /api/v1/teams/{team_id}/invite:
+    post:
+      tags: [Teams]
+      summary: Invite a user to join the team
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/team_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "migoje5962@bauscn.com"
+                role:
+                  type: string
+                  enum: [member, admin]
+                  example: "member"
+              required: [email, role]
+      responses:
+        '200':
+          description: Invitation sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/teams/{team_id}/members:
+    get:
+      tags: [Teams]
+      summary: Get all members of a team
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/team_id'
+      responses:
+        '200':
+          description: List of team members
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      type: object
+
+  /api/v1/teams/{team_id}/tasks:
+    post:
+      tags: [Tasks]
+      summary: Create a new task in the team
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/team_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                      example: "UI Implementation"
+                    description:
+                      type: string
+                      example: "Implement UI for dashboard"
+                    status:
+                      type: string
+                      enum: [pending, in_progress, completed]
+                      example: "pending"
+                    priority:
+                      type: string
+                      enum: [low, medium, high]
+                      example: "medium"
+                    due_date:
+                      type: string
+                      format: date-time
+                      example: "2025-04-30T00:00:00Z"
+                  required: [title, status, priority]
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task:
+                    type: object
+
+    get:
+      tags: [Tasks]
+      summary: List tasks in a team (with filtering)
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/team_id'
+        - name: status
+          in: query
+          description: Filter by task status
+          schema:
+            type: string
+            enum: [pending, in_progress, completed]
+          example: "pending"
+        - name: priority
+          in: query
+          description: Filter by task priority
+          schema:
+            type: string
+            enum: [low, medium, high]
+          example: "medium"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/per_page'
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      type: object
+                  meta:
+                    type: object
+
+  /api/v1/tasks/{task_id}:
+    get:
+      tags: [Tasks]
+      summary: Get task details
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/task_id'
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task:
+                    type: object
+
+    patch:
+      tags: [Tasks]
+      summary: Update a task
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/task_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task:
+                  type: object
+                  properties:
+                    status:
+                      type: string
+                      enum: [pending, in_progress, completed]
+                      example: "completed"
+                    priority:
+                      type: string
+                      enum: [low, medium, high]
+                      example: "high"
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+    delete:
+      tags: [Tasks]
+      summary: Delete a task
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/task_id'
+      responses:
+        '204':
+          description: Task deleted successfully
+
+  /api/v1/tasks/{task_id}/assign:
+    patch:
+      tags: [Tasks]
+      summary: Assign or reassign a task
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/task_id'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assigned_user_id:
+                  type: integer
+                  example: 3
+              required: [assigned_user_id]
+      responses:
+        '200':
+          description: Task assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/users/profile:
+    get:
+      tags: [User]
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    team_id:
+      name: team_id
+      in: path
+      description: ID of the team
+      required: true
+      schema:
+        type: string
+      example: "5"
+    
+    task_id:
+      name: task_id
+      in: path
+      description: ID of the task
+      required: true
+      schema:
+        type: string
+      example: "3"
+    
+    page:
+      name: page
+      in: query
+      description: Page number for pagination
+      schema:
+        type: integer
+        default: 1
+      example: 1
+    
+    per_page:
+      name: per_page
+      in: query
+      description: Number of items per page
+      schema:
+        type: integer
+        default: 10
+      example: 10
