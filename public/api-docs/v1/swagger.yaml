@@ -4,12 +4,10 @@ info:
   description: API for managing tasks, teams, and user authentication with role-based permissions
   version: 1.0.0
 servers:
-  - url: url
-
-  # - url: https://task-management-system-0c84.onrender.com
-  #   description: Production server (Render)
-  # - url: http://localhost:3000
-  #   description: Development server
+  - url: https://task-management-system-0c84.onrender.com
+    description: Production server (Render)
+  - url: http://localhost:3000
+    description: Development server
 tags:
   - name: Auth
     description: User authentication endpoints
