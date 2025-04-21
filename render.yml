@@ -26,8 +26,11 @@ databases:
     plan: free  # Choose a higher plan if needed
 
 redis:
+  -type: redis
   - name: task-management-redis
-    plan: free  # Choose a higher plan if needed
+    plan: free 
+    maxmemoryPolicy: noeviction
+
 
 workers:
   - type: background
