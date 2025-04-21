@@ -6,8 +6,8 @@
   <title>Task Management System API's</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
-  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
-  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="/favicon-long.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/favicon-long.png" sizes="16x16" />
   <style>
     html
     {
@@ -78,6 +78,22 @@
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
+(function () {
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      const logoElements = document.getElementsByClassName("link");
+
+      if (logoElements.length > 0 && logoElements[0].children.length > 0) {
+        const logoImg = logoElements[0].children[0];
+        logoImg.alt = "My API";
+        logoImg.src = "/favicon-long.png"; //
+      }
+    }, 100);
+  });
+})();
+
+</script>
+<script>
   window.onload = function () {
     var configObject = JSON.parse('<%= config_object.to_json %>');
     var oauthConfigObject = JSON.parse('<%= oauth_config_object.to_json %>');
@@ -97,6 +113,23 @@
     // Apply OAuth config
     ui.initOAuth(oauthConfigObject);
   }
+
+  window.onload = function () {
+    const baseUrl = window.location.origin;
+
+    const configObject = {
+      url: "/api-docs/v1/swagger.yaml",
+      dom_id: "#swagger-ui",
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+      layout: "StandaloneLayout",
+      requestInterceptor: function(request) {
+        // Inject base_url into requests if needed
+        return request;
+      }
+    };
+
+    SwaggerUIBundle(configObject);
+  };
 </script>
 </body>
 
