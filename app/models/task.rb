@@ -21,12 +21,17 @@ class Task < ApplicationRecord
   end
 
   def send_notifications
-    # debugger
     if assigned_user_id_previously_changed?
       TaskMailer.task_assigned(self).deliver_later
+      fire_sidekiq_once
     elsif saved_change_to_status? && completed?
       TaskMailer.task_completed(self).deliver_later
+      fire_sidekiq_once
     end
+  end
+
+  def fire_sidekiq_once
+    system("bundle exec rake sidekiq:run_once &")
   end
 
 end
