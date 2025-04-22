@@ -17,9 +17,7 @@ services:
       - key: JWT_SECRET_KEY
         value: {{ JWT_SECRET_KEY }}
       - key: REDIS_URL
-        fromService:
-          name: task-management-redis
-          property: connectionString
+        value: {{ REDIS_URL }}  # Use the Upstash Redis URL here
       - key: RAILS_MASTER_KEY
         value: {{ RAILS_MASTER_KEY }}
       - key: GMAIL_USERNAME
@@ -27,7 +25,7 @@ services:
       - key: GMAIL_PASSWORD
         value: {{ GMAIL_PASSWORD }}
       - key: MAILER_HOST
-        value: task-management-api.onrender.com
+        value: https://task-management-system-0c84.onrender.com
     healthCheckPath: /health
 
 databases:
@@ -55,9 +53,7 @@ workers:
           name: task_management_db
           property: connectionString
       - key: REDIS_URL
-        fromService:
-          name: task-management-redis
-          property: connectionString
+        value: {{ REDIS_URL }}  # Use the Upstash Redis URL here
       - key: SECRET_KEY_BASE
         value: {{ SECRET_KEY_BASE }}
       - key: JWT_SECRET_KEY
@@ -69,7 +65,7 @@ workers:
       - key: GMAIL_PASSWORD
         value: {{ GMAIL_PASSWORD }}
       - key: MAILER_HOST
-        value: task-management-api.onrender.com
+        value: https://task-management-system-0c84.onrender.com
 
 cronJobs:
   - name: task_cleanup

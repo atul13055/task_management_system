@@ -2,8 +2,3 @@
 :queues:
   - mailers
   - default
-
-
-# Redis URL from ENV variable
-:redis:
-  url: <%= ENV['REDIS_URL'] %>  
