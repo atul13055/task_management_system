@@ -9,28 +9,36 @@ services:
       - key: RAILS_ENV
         value: production
       - key: DATABASE_URL
-        value: {{ DATABASE_URL }}  # Render will automatically set this when creating the PostgreSQL service
+        fromDatabase:
+          name: task_management_db
+          property: connectionString
       - key: SECRET_KEY_BASE
-        value: {{ SECRET_KEY_BASE }}  # Set this in your Render environment variables or generate using `rails secret`
+        value: {{ SECRET_KEY_BASE }}
       - key: JWT_SECRET_KEY
-        value: {{ JWT_SECRET_KEY }}  # Set this key in your environment variables
+        value: {{ JWT_SECRET_KEY }}
       - key: REDIS_URL
-        value: {{ REDIS_URL }}  # Render will automatically set this for the Redis service
+        fromService:
+          name: task-management-redis
+          property: connectionString
       - key: RAILS_MASTER_KEY
-        value: {{ RAILS_MASTER_KEY }}  # If you're using Rails credentials, set this in your environment variables
-    healthCheckPath: /health  # Optional: You can create a health check route for your API
+        value: {{ RAILS_MASTER_KEY }}
+      - key: GMAIL_USERNAME
+        value: {{ GMAIL_USERNAME }}
+      - key: GMAIL_PASSWORD
+        value: {{ GMAIL_PASSWORD }}
+      - key: MAILER_HOST
+        value: task-management-api.onrender.com
+    healthCheckPath: /health
 
 databases:
   - name: task_management_db
     type: postgresql
-    plan: free  # Choose a higher plan if needed
+    plan: free
 
 redis:
-  -type: redis
   - name: task-management-redis
-    plan: free 
+    plan: free
     maxmemoryPolicy: noeviction
-
 
 workers:
   - type: background
@@ -38,17 +46,34 @@ workers:
     env: ruby
     plan: free
     buildCommand: bundle install
-    startCommand: bundle exec sidekiq -C config/sidekiq.yml  # This will start the Sidekiq worker
+    startCommand: bundle exec sidekiq -C config/sidekiq.yml
     envVars:
       - key: RAILS_ENV
         value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: task_management_db
+          property: connectionString
       - key: REDIS_URL
-        value: {{ REDIS_URL }}  # Automatically set by Render
+        fromService:
+          name: task-management-redis
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        value: {{ SECRET_KEY_BASE }}
+      - key: JWT_SECRET_KEY
+        value: {{ JWT_SECRET_KEY }}
+      - key: RAILS_MASTER_KEY
+        value: {{ RAILS_MASTER_KEY }}
+      - key: GMAIL_USERNAME
+        value: {{ GMAIL_USERNAME }}
+      - key: GMAIL_PASSWORD
+        value: {{ GMAIL_PASSWORD }}
+      - key: MAILER_HOST
+        value: task-management-api.onrender.com
 
-# Optional: If you need cron jobs, add them here
 cronJobs:
   - name: task_cleanup
-    schedule: "0 0 * * *"  # Example cron job to run at midnight every day
+    schedule: "0 0 * * *"
     command: bundle exec rake task:cleanup
     envVars:
       - key: RAILS_ENV
