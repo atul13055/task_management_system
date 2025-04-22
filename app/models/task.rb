@@ -30,8 +30,9 @@ class Task < ApplicationRecord
     end
   end
 
-  def fire_sidekiq_once
-    system("bundle exec rake sidekiq:run_once &")
-  end
+ def fire_sidekiq_once
+  pid = spawn("bundle exec rake sidekiq:run_once")
+  Process.detach(pid) 
+ end
 
 end
