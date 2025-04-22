@@ -53,7 +53,7 @@ end
 gem 'devise-jwt'           
 gem 'cancancan'      
 gem 'active_model_serializers'
-gem 'redis', '~> 5.0'  
+gem 'redis', '~> 5.4'  
 gem 'sidekiq', '~> 7.3'
 gem 'rswag-ui'
 gem 'rswag-api' 

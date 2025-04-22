@@ -1,5 +1,6 @@
 class TestMailerController < ApplicationController
   def send_test_email
+    # debugger
     user = User.first # or find_by(email: 'your_email@gmail.com')
     task = Task.first # any sample task
 
