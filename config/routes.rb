@@ -17,6 +17,10 @@ get 'test_mailer', to: 'test_mailer#send_test_email'
       # Auth routes
       post   'signup', to: 'auth#signup'
       post   'login',  to: 'auth#login'
+      post   'verify_otp', to: 'auth#verify_otp'
+      post   'resend_otp', to: 'auth#resend_otp'
+      post    'forgot_password', to: 'auth#forgot_password'
+      post    'reset_password', to: 'auth#reset_password'
 
       # User profile
       get    'users/profile', to: 'users#profile'

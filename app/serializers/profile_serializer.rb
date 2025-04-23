@@ -8,6 +8,7 @@ class ProfileSerializer < ActiveModel::Serializer
              :designation,
              :skills,
              :last_logged_in,
+             :is_verified,
              :created_at,
              :updated_at
 
