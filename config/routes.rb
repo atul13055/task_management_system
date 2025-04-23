@@ -19,7 +19,11 @@ get 'test_mailer', to: 'test_mailer#send_test_email'
       post   'login',  to: 'auth#login'
 
       # User profile
-      get 'users/profile', to: 'users#profile'
+      get    'users/profile', to: 'users#profile'
+      patch  'users',         to: 'users#update'
+      delete 'users',         to: 'users#destroy'
+      get    'users/assigned_teams',   to: 'users#assigned_teams'
+      get    'users/assigned_tasks', to: 'users#assigned_tasks'
       #team
       resources :teams do
         member do

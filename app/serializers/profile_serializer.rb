@@ -6,6 +6,7 @@ class ProfileSerializer < ActiveModel::Serializer
              :username,
              :status,
              :designation,
+             :skills,
              :last_logged_in,
              :created_at,
              :updated_at
