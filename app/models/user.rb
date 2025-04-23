@@ -21,8 +21,11 @@ class User < ApplicationRecord
   has_many :created_teams, class_name: 'Team', foreign_key: 'creator_id'
   has_many :created_tasks, class_name: 'Task', foreign_key: 'creator_id'
   # has_many :assigned_tasks, class_name: 'Task', foreign_key: 'assigned_user_id'
-  has_many :assigned_tasks, class_name: "Task", foreign_key: "assigned_user_id", dependent: :nullify
+  # has_many :assigned_tasks, class_name: "Task", foreign_key: "assigned_user_id", dependent: :nullify
   has_many :teams_as_member, through: :memberships, source: :team, dependent: :nullify
+  has_and_belongs_to_many :assigned_tasks, class_name: 'Task', join_table: 'tasks_users', foreign_key: 'user_id', dependent: :nullify
+
+
   has_one :user_otp, dependent: :destroy
   has_one :user_forgot_password_otp, dependent: :destroy
 

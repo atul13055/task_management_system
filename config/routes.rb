@@ -40,7 +40,8 @@ get 'test_mailer', to: 'test_mailer#send_test_email'
       #tasks
       resources :tasks, only: [:show, :update, :destroy] do
         member do
-          patch 'assign'
+          patch 'assign_users'
+          patch 'remove_users'
         end
       end
     end
