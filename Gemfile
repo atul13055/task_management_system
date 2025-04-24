@@ -61,5 +61,6 @@ gem 'pry-rails'
 gem 'kaminari'              
 gem 'ransack' 
 gem 'jwt'  
+gem 'foreman'
 
 

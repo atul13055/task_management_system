@@ -1,4 +1,7 @@
 :concurrency: 5
 :queues:
-  - mailers
   - default
+  - mailers
+:redis:
+  url: <%= ENV["REDIS_URL"] %>
+  namespace: task-management-system

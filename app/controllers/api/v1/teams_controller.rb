@@ -33,29 +33,36 @@ class Api::V1::TeamsController < ApplicationController
     end
   end
 
-  def inviteable_users
-    authorize! :manage, @team
+def inviteable_users
+  authorize! :manage, @team
 
-    users = User.where.not(id: @team.user_ids)
-    users = users.where(status: params[:status]) if params[:status].present?
-    users = users.where(designation: params[:designation]) if params[:designation].present?
+  users = User.where(active: true, is_verified: true)
+              .where.not(id: @team.user_ids)
 
-    if params[:search].present?
-      keyword = "%#{params[:search].downcase}%"
-      users = users.where("LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(username) LIKE ?", keyword, keyword, keyword)
-    end
+  admin_user_ids = @team.team_users.where(role: 'admin').pluck(:user_id)
+  users = users.where.not(id: admin_user_ids)
 
-    users = users.page(params[:page]).per(params[:per_page] || 10)
+  users = users.where(status: params[:status]) if params[:status].present?
+  users = users.where(designation: params[:designation]) if params[:designation].present?
 
-    render json: users,
-           each_serializer: InviteableUserSerializer,
-           meta: {
-             current_page: users.current_page,
-             total_pages: users.total_pages,
-             total_count: users.total_count
-           },
-           adapter: :json
+  if params[:search].present?
+    keyword = "%#{params[:search].downcase}%"
+    users = users.where("LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(username) LIKE ?", keyword, keyword, keyword)
   end
+
+  # Pagination
+  users = users.page(params[:page]).per(params[:per_page] || 10)
+
+  render json: users,
+         each_serializer: InviteableUserSerializer,
+         meta: {
+           current_page: users.current_page,
+           total_pages: users.total_pages,
+           total_count: users.total_count
+         },
+         adapter: :json
+end
+
 
   def invite
     authorize! :manage, @team
