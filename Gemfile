@@ -47,9 +47,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  gem 'dotenv-rails' 
   # gem 'gem_activity_tracker', '~> 1.0', '>= 1.0.2'
 end
+  gem 'dotenv-rails' 
 gem 'devise-jwt'           
 gem 'cancancan'      
 gem 'active_model_serializers'
