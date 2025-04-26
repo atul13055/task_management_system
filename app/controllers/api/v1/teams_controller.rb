@@ -38,9 +38,9 @@ def inviteable_users
 
   users = User.where(active: true, is_verified: true)
               .where.not(id: @team.user_ids)
-
-  admin_user_ids = @team.team_users.where(role: 'admin').pluck(:user_id)
-  users = users.where.not(id: admin_user_ids)
+              # debugger
+  # admin_user_ids = @team.team_users.where(role: 'admin').pluck(:user_id)
+  # users = users.where.not(id: admin_user_ids)
 
   users = users.where(status: params[:status]) if params[:status].present?
   users = users.where(designation: params[:designation]) if params[:designation].present?
