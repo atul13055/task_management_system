@@ -1,6 +1,5 @@
 if Rails.env.production?
   Thread.new do
-    require 'sidekiq/cli'
-    Sidekiq::CLI.instance.run
+    system("bundle exec sidekiq -C config/sidekiq.yml")
   end
 end
