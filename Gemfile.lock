@@ -79,7 +79,7 @@ GEM
     bcrypt_pbkdf (1.1.1-x86_64-darwin)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
-    brakeman (7.0.2)
+    brakeman (7.1.0)
       racc
     builder (3.3.0)
     cancancan (3.6.1)
